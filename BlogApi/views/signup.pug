@@ -1,0 +1,39 @@
+extends layout
+
+block content 
+  h1 #{title}
+
+  if error 
+    p #[strong #{error}]
+  if errors 
+    ul
+      each err in errors 
+        li= JSON.stringify(err)
+
+
+
+  form(method='POST' action='')
+    div.form-group
+      label(for='firstName') First name: 
+      input#firstName.form-control(type='text' placeholder='William' name='firstName' value=(undefined===user ? '' : user.firstName))
+
+      label(for='lastName' ) Last name: 
+      input#lastName.form-control(type='text' placeholder='Shakespeare' name='lastName' value=(undefined===user ? '' : user.lastName))
+
+      label(for='email') Email: 
+      input#email.form-control(type='text' placeholder='name@gmail.com' name='email' value=(undefined===user ? '' : user.email))
+
+      label(for='password') Password: 
+      input#password.form-control(type='text' placeholder='aaaaaa' name='password' value=(undefined===user ? '' : user.password))
+
+      label(for='passwordConfirm') Confirm password: 
+      input#passwordConfirm.form-control(type='text' placeholder='aaaaaa' name='passwordConfirm' value=(undefined===user ? '' : user.password))
+
+      label(for='membersPassword') Enter secret passcode to become a member: 
+      input#membersPassword.form-control(type='text' placeholder='aaaaaa' name='membersPassword' value=true)
+
+      label(for='isAdmin') Select for admin role: 
+      input#isAdmin.form-control(type='checkbox' checked=true value='1' name='isAdmin')
+
+    button.btn.btn-primary(type='submit') Submit
+

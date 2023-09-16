@@ -9,6 +9,12 @@ const UserSchema = new Schema({
     minLength: 2,
     maxLength: 30,
   },
+  lastName: {
+    type: String,
+    required: [true, "Name is required"],
+    minLength: 2,
+    maxLength: 30,
+  },
   email: {
     type: String,
     trim: true,
@@ -26,11 +32,19 @@ const UserSchema = new Schema({
     minLength: 6,
     maxLength: 15,
   },
-  membershipStatus: {
-    type: String,
+  isMember: {
+    type: Boolean,
+    required: true,
   },
   isAdmin: {
-    type: String,
+    type: Boolean,
+    required: true,
     default: false,
   },
 });
+
+UserSchema.virtual("url").get(function () {
+  return `/users/${this._id}`;
+});
+
+module.exports = mongoose.model("User", UserSchema);
