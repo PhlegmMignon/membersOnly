@@ -28,7 +28,6 @@ exports.signup_post = [
       return value == req.body.password;
     }),
   body("membersPassword").trim().escape(),
-  body("isAdmin").exists(),
 
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
