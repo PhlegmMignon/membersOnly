@@ -9,22 +9,54 @@ const login_controller = require("../controllers/loginController");
 
 const session = require("express-session");
 const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
+
+// passport.serializeUser((user, done) => {
+//   console.log("serialized");
+//   done(null, user.id);
+// });
+// passport.deserializeUser(async (id, done) => {
+//   try {
+//     console.log("deserialized");
+
+//     const user = await User.findById(id);
+//     done(null, user);
+//   } catch (err) {
+//     done(err);
+//   }
+// });
+// );
+// passport.serializeUser((user, done) => {
+//   console.log("serialized");
+//   done(null, user.id);
+// });
+// passport.deserializeUser(async (id, done) => {
+//   try {
+//     console.log("deserialized");
+
+//     const user = await User.findById(id);
+//     done(null, user);
+//   } catch (err) {
+//     done(err);
+//   }
+// });
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
+  // console.log(req._passport.instance._userProperty);
   res.render("index", { title: "Blog api project", user: req.user });
 });
 
-router.post("/", [
-  body("email").trim().escape(),
-  body("password").trim().escape(),
+router.post(
+  "/",
 
   passport.authenticate("local", {
-    successRedirect: "/",
+    successRedirect: "/signup",
     failureRedirect: "/",
-  }),
-]);
+    failureFlash: true,
+  })
+);
+
+function authFx() {}
 
 //Get signup
 router.get("/signup", signup_controller.signup_get);

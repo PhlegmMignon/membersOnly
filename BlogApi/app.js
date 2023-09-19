@@ -14,12 +14,14 @@ const User = require("./models/user");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
+const flash = require("connect-flash");
+const bodyParser = require("body-parser");
 
 //Saves user session
 passport.use(
   new LocalStrategy(async (username, password, done) => {
     try {
-      const user = await User.findOne({ username: username });
+      const user = await User.findOne({ email: username });
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       }
@@ -34,10 +36,13 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
+  console.log("serialized");
   done(null, user.id);
 });
 passport.deserializeUser(async (id, done) => {
   try {
+    console.log("deserialized");
+
     const user = await User.findById(id);
     done(null, user);
   } catch (err) {
@@ -60,7 +65,9 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 //Handles login
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
