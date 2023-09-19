@@ -16,6 +16,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const flash = require("connect-flash");
 const bodyParser = require("body-parser");
+const bcrypt = require("bcryptjs");
 
 //Saves user session
 passport.use(
@@ -25,9 +26,11 @@ passport.use(
       if (!user) {
         return done(null, false, { message: "Incorrect username" });
       }
-      if (user.password !== password) {
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) {
         return done(null, false, { message: "Incorrect password" });
       }
+
       return done(null, user);
     } catch (err) {
       return done(err);
@@ -71,6 +74,11 @@ app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.urlencoded({ extended: false }));
+//Makes currentUser available everywhere
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -109,7 +117,6 @@ module.exports = app;
 ////Log in btn
 //////Form for email + password. Submit btn
 //////Go back btn
+
 ////Load 10 msgs w/ author + date posted for non members
 //////Has delete btn for admins
-
-//Secure passwords with bcrypt

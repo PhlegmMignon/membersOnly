@@ -51,14 +51,14 @@ router.post(
   "/",
 
   passport.authenticate("local", {
-    successRedirect: "/signup",
+    successRedirect: "/",
     failureRedirect: "/",
     failureFlash: true,
   })
 );
 
 //Logout to home
-router.get("/log-out", (req, res, next) => {
+router.get("/logout", (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
