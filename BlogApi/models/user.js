@@ -30,7 +30,7 @@ const UserSchema = new Schema({
     type: String,
     required: "Password required",
     minLength: 6,
-    maxLength: 15,
+    maxLength: 100,
   },
   isMember: {
     type: Boolean,

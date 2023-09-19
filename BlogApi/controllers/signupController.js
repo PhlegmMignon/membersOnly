@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 const User = require("../models/user");
+const bcrypt = require("bcryptjs");
 
 exports.signup_get = asyncHandler(async (req, res, next) => {
   res.render("signup", { title: "Sign up form" });
@@ -38,36 +39,42 @@ exports.signup_post = [
     //   isMember = true;
     // }
 
-    let isMember = req.body.password == req.body.passwordConfirm ? true : false;
+    let isMember = req.body.membersPassword == "assdfg" ? true : false;
 
-    const user = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-      isMember: isMember,
-      isAdmin: req.body.isAdmin,
-    });
-    console.log(user);
-
-    if (!errors.isEmpty()) {
-      res.render("signup", {
-        title: "Sign up form",
-        user: user,
-        errors: errors.array(),
-      });
-      return;
-    } else {
-      const userExists = await User.findOne({
-        email: req.body.email,
-      }).exec();
-
-      if (userExists) {
-        res.redirect("/signup", { error: "Email already in use" });
+    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+      if (err) {
+        return next(err);
       } else {
-        await user.save();
-        res.redirect("/", { signupSuccess: "" });
+        const user = new User({
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          password: hashedPassword,
+          isMember: isMember,
+          isAdmin: req.body.isAdmin,
+        });
+        console.log(user);
+
+        if (!errors.isEmpty()) {
+          res.render("signup", {
+            title: "Sign up form",
+            user: user,
+            errors: errors.array(),
+          });
+          return;
+        } else {
+          const userExists = await User.findOne({
+            email: req.body.email,
+          }).exec();
+
+          if (userExists) {
+            res.redirect("/signup", { error: "Email already in use" });
+          } else {
+            await user.save();
+            res.redirect("/");
+          }
+        }
       }
-    }
+    });
   }),
 ];

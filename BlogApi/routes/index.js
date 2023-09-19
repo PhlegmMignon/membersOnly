@@ -46,6 +46,7 @@ router.get("/", function (req, res, next) {
   res.render("index", { title: "Blog api project", user: req.user });
 });
 
+//Post home page
 router.post(
   "/",
 
@@ -56,7 +57,15 @@ router.post(
   })
 );
 
-function authFx() {}
+//Logout to home
+router.get("/log-out", (req, res, next) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    res.redirect("/");
+  });
+});
 
 //Get signup
 router.get("/signup", signup_controller.signup_get);
