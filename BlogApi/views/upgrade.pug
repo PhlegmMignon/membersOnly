@@ -1,0 +1,17 @@
+extends layout 
+
+block content 
+  h1= title 
+
+  if !user 
+    p Sign up first
+  else
+    if user.isMember
+      p You're already a member 
+    else 
+      form(method='POST' action='')
+        div.form-group
+          label(for='passcode') Enter passcode to become a member: 
+          input#passcode.form-control(type='text' placeholder='Enter passcode' name='passcode' )
+
+        button.btn.btn-primary(type='submit') Submit

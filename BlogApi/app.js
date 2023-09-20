@@ -119,7 +119,7 @@ module.exports = app;
 //////Go back btn
 
 ////Load 10 msgs. Author and date only visible to members
+//////Array = msg.find sort by descending
 //////Has delete btn for admins
 
 //Page where user can upgrade to members (update db)
-//Create new msg

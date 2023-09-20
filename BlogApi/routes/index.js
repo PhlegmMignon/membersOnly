@@ -92,7 +92,6 @@ router.post("/create-post", [
       content: req.body.content,
       user: req.user.id,
     });
-    console.log(message);
 
     if (!errors.isEmpty()) {
       res.render("create-post", {
@@ -108,4 +107,47 @@ router.post("/create-post", [
   }),
 ]);
 
+//Get upgrade to member
+router.get("/upgrade", (req, res, next) => {
+  res.render("upgrade", { title: "Upgrade to member", user: req.user });
+});
+
+//Post to upgrade to member
+router.post("/upgrade", [
+  body("passcode")
+    .escape()
+    .trim()
+    .custom((value) => {
+      return value == "assdfg";
+    })
+    .withMessage("Wrong passcode"),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+
+    console.log(req.user);
+
+    const user = new User({
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+      email: req.user.email,
+      password: req.user.password,
+      isMember: true,
+      isAdmin: req.user.isAdmin,
+      _id: req.user.id,
+    });
+
+    if (!errors.isEmpty()) {
+      res.render("upgrade", {
+        title: "Invalid passcode",
+        user: req.user,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      const updatedUser = await User.findByIdAndUpdate(req.user.id, user);
+      res.render("/", { title: "You're now a member!" });
+    }
+  }),
+]);
 module.exports = router;
