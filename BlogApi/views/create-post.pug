@@ -1,0 +1,18 @@
+extends layout 
+
+block content 
+
+  h1(class='text-2xl')= title
+
+  if user
+    form(method='POST' action='')
+          div.form-group
+            label(for='title') Title: 
+            input#title.form-control(type='text' placeholder='Post name here' name='title' )
+
+            label(for='content') Content: 
+            input#content.form-control(type='text' placeholder='Text content here' name='content' )
+
+          button.btn.btn-primary(type='submit') Submit
+  else 
+    p Log in to create a new post 

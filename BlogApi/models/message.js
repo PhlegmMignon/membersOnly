@@ -1,24 +1,23 @@
 const mongoose = require("mongoose");
+const { DateTime } = require("luxon");
 
 const Schema = mongoose.Schema;
 
-const MessageSchema = new Schem({
-  user: { type: Schema.Types.ObjectId, ref: "Message", required: true },
+const MessageSchema = new Schema({
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
   date_created: { type: Date, default: Date.now },
-  title: { type: String, required: [true, "Title required"] },
-  text: { type: String, required: [true, "Text required"] },
+  title: { type: String, required: [true, "Title required"], minLength: 1 },
+  content: { type: String, required: [true, "Text required"], minLength: 1 },
 });
 
-MessageSchema.virtual("url").get(function () {
-  return `/catalog/book/${this._id}`;
-});
+// MessageSchema.virtual("url").get(function () {
+//   return `/catalog/book/${this._id}`;
+// });
 
-BookInstanceSchema.virtual("due_back_formatted").get(function () {
-  return DateTime.fromJSDate(this.due_back).toLocaleString(DateTime.DATE_MED);
-});
-
-BookInstanceSchema.virtual("due_back_yyyy_mm_dd").get(function () {
-  return DateTime.fromJSDate(this.due_back).toISODate(); // format 'YYYY-MM-DD'
+MessageSchema.virtual("date_created_formatted").get(function () {
+  return DateTime.fromJSDate(this.date_created).toLocaleString(
+    DateTime.DATE_MED
+  );
 });
 
 module.exports = mongoose.model("Message", MessageSchema);

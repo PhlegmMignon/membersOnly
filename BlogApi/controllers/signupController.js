@@ -33,13 +33,13 @@ exports.signup_post = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    // let isMember = false;
-    // if (body("membersPassword").trim().escape() == "assdfg") {
-    //   console.log("Is a member");
-    //   isMember = true;
-    // }
-
-    let isMember = req.body.membersPassword == "assdfg" ? true : false;
+    //Admins are automatically members
+    let isMember =
+      req.body.isAdmin == 1
+        ? true
+        : req.body.membersPassword == "assdfg"
+        ? true
+        : false;
 
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
       if (err) {
