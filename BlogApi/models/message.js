@@ -10,9 +10,9 @@ const MessageSchema = new Schema({
   content: { type: String, required: [true, "Text required"], minLength: 1 },
 });
 
-// MessageSchema.virtual("url").get(function () {
-//   return `/catalog/book/${this._id}`;
-// });
+MessageSchema.virtual("url").get(function () {
+  return `/${this._id}`;
+});
 
 MessageSchema.virtual("date_created_formatted").get(function () {
   return DateTime.fromJSDate(this.date_created).toLocaleString(

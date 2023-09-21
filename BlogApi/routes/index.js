@@ -13,34 +13,28 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
-  // console.log(req._passport.instance._userProperty);
+router.get("/", async function (req, res, next) {
+  const messages = await Message.find().populate("user").exec();
+
+  console.log(messages);
 
   if (req.session.flash) {
     console.log(req.session.flash.error);
     res.render("index", {
       title: "Blog api project",
       user: req.user,
-      message: req.session.flash.error[0],
+      messages: messages,
     });
   }
   res.render("index", {
     title: "Blog api project",
     user: req.user,
+    messages: messages,
   });
 });
 
 //Login to home page
 router.post("/", [
-  body("username").trim().escape(),
-  body("password").trim().escape(),
-  asyncHandler(async (req, res, next) => {
-    const errors = validationResult(req);
-
-    const user = await User.find({ email: req.body.username });
-
-    next();
-  }),
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/",
@@ -140,4 +134,29 @@ router.post("/upgrade", [
     }
   }),
 ]);
+
+//Get delete for message
+router.get(
+  "/:id/delete",
+  asyncHandler(async (req, res, next) => {
+    const message = await Message.findById(req.params.id).exec();
+    console.log(message);
+
+    if (message == null) {
+      res.redirect("/");
+    }
+    res.render("delete", { message: message });
+  })
+);
+
+//Post delete for message
+router.post(
+  "/:id/delete",
+  asyncHandler(async (req, res, next) => {
+    const message = await Message.findByIdAndRemove(req.params.id).exec();
+
+    res.redirect("/");
+  })
+);
+
 module.exports = router;

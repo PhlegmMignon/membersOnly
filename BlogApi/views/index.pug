@@ -17,7 +17,23 @@ block content
 
       button.btn.btn-primary(type='submit') Submit
   else
-    p Recent messages
+    if messages 
+      ul
+        each post in messages 
+          if user.isMember
+            li(class='flex')
+              div 
+                h3= post.title
+                div=  'by ' + post.user.firstName + ' ' + post.user.lastName
+                div= post.date_created_formatted
+              p= post.content
+              if user.isAdmin 
+                a(href= post.url + '/delete') Delete post
+          else 
+            li 
+              div 
+                h3= post.title 
+              p= post.content 
 
     a(href='/logout') Log out 
 
