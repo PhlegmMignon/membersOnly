@@ -24,11 +24,11 @@ passport.use(
     try {
       const user = await User.findOne({ email: username });
       if (!user) {
-        return done(null, false, { message: "Incorrect username" });
+        return done(null, false, { message: "Incorrect user/pass" });
       }
-      const match = bcrypt.compare(password, user.password);
+      const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        return done(null, false, { message: "Incorrect password" });
+        return done(null, false, { message: "Incorrect user/pass" });
       }
 
       return done(null, user);
@@ -121,5 +121,3 @@ module.exports = app;
 ////Load 10 msgs. Author and date only visible to members
 //////Array = msg.find sort by descending
 //////Has delete btn for admins
-
-//Page where user can upgrade to members (update db)

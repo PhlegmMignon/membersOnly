@@ -10,53 +10,43 @@ const login_controller = require("../controllers/loginController");
 
 const session = require("express-session");
 const passport = require("passport");
-
-// passport.serializeUser((user, done) => {
-//   console.log("serialized");
-//   done(null, user.id);
-// });
-// passport.deserializeUser(async (id, done) => {
-//   try {
-//     console.log("deserialized");
-
-//     const user = await User.findById(id);
-//     done(null, user);
-//   } catch (err) {
-//     done(err);
-//   }
-// });
-// );
-// passport.serializeUser((user, done) => {
-//   console.log("serialized");
-//   done(null, user.id);
-// });
-// passport.deserializeUser(async (id, done) => {
-//   try {
-//     console.log("deserialized");
-
-//     const user = await User.findById(id);
-//     done(null, user);
-//   } catch (err) {
-//     done(err);
-//   }
-// });
+const LocalStrategy = require("passport-local").Strategy;
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
   // console.log(req._passport.instance._userProperty);
-  res.render("index", { title: "Blog api project", user: req.user });
+
+  if (req.session.flash) {
+    console.log(req.session.flash.error);
+    res.render("index", {
+      title: "Blog api project",
+      user: req.user,
+      message: req.session.flash.error[0],
+    });
+  }
+  res.render("index", {
+    title: "Blog api project",
+    user: req.user,
+  });
 });
 
-//Post home page
-router.post(
-  "/",
+//Login to home page
+router.post("/", [
+  body("username").trim().escape(),
+  body("password").trim().escape(),
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
 
+    const user = await User.find({ email: req.body.username });
+
+    next();
+  }),
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/",
     failureFlash: true,
-  })
-);
+  }),
+]);
 
 //Logout to home
 router.get("/logout", (req, res, next) => {
@@ -125,8 +115,6 @@ router.post("/upgrade", [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
 
-    console.log(req.user);
-
     const user = new User({
       firstName: req.user.firstName,
       lastName: req.user.lastName,
@@ -146,7 +134,9 @@ router.post("/upgrade", [
       return;
     } else {
       const updatedUser = await User.findByIdAndUpdate(req.user.id, user);
-      res.render("/", { title: "You're now a member!" });
+
+      //Possible bug: req.user may not work so you will see login page when you upgrade to member
+      res.render("index", { title: "You're now a member!", user: req.user });
     }
   }),
 ]);

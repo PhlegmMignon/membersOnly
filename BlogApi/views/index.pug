@@ -3,6 +3,9 @@ extends layout
 block content
   h1(class="text-2xl")= title
 
+  if message 
+    h1= message
+
   if !user 
     form(method='POST' action='')
       div.form-group
